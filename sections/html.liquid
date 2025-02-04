@@ -1,0 +1,122 @@
+{%- include 'section-helper', snippet_instance: section, snippet_type: 'section', snippet_name: 'custom-html', section_class: 'html-section', section_type: 'custom-html' -%}
+
+{% schema %}
+  {
+    "name": "HTML",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Section Title"
+      },
+      {
+        "type": "select",
+        "id": "title_alignment",
+        "label": "Title Alignment",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "row_wrap",
+        "label": "Wrap in a row",
+        "default": true
+      },
+      {
+        "type": "html",
+        "id": "html",
+        "label": "Html"
+      },
+      {
+        "type": "header",
+        "content": "Content Style"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_styles",
+        "label": "Enable Custom Styles",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Color"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title Color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color"
+      },
+      {
+        "type": "range",
+        "id": "title_font_size",
+        "min": 12,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "Title Font Size",
+        "default": 28
+      },
+      {
+        "type": "range",
+        "id": "text_font_size",
+        "min": 12,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "Text Font Size",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "spacing_top",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "px",
+        "label": "Spacing: Top",
+        "default": 50
+      },
+      {
+        "type": "range",
+        "id": "spacing_bottom",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "px",
+        "label": "Spacing: Bottom",
+        "default": 50
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom HTML",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

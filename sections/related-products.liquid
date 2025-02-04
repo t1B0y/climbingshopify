@@ -1,0 +1,195 @@
+<div data-section-id="{{ section.id }}" data-section-type="related-products">
+  {% if section.settings.show_related_products == true %}
+
+    {% assign heading = section.settings.related_title %}
+    {% assign related_products_number = section.settings.related_products_number %}
+
+    {% comment %}
+      Set either or both to true, if you want
+      to limit yourself to items with same vendor, and/or type.
+    {% endcomment %}
+
+    {% assign same_vendor = false %}
+    {% assign same_type = false %}
+
+    {% comment %}
+      Collections to ignore.
+      Never pick related items from those.
+    {% endcomment %}
+
+    {% assign exclusions = 'frontpage,all' | split: ',' %}
+
+    {% comment %}
+      Looking for a relevant collection.
+    {% endcomment %}
+
+    {% if product.metafields.c_f['Related Products'] %}
+      {% assign collection = collections[product.metafields.c_f['Related Products']] %}
+    {% endif %}
+
+    {% assign found_a_collection = false %}
+    {% if collection and collection.all_products_count > 1 %}
+      {% unless exclusions contains collection.handle %}
+        {% assign found_a_collection = true %}
+      {% endunless %}
+    {% endif %}
+    {% unless found_a_collection %}
+      {% for c in product.collections %}
+        {% unless exclusions contains c.handle or c.all_products_count < 2 %}
+          {% assign found_a_collection = true %}
+          {% assign collection = c %}
+          {% break %}
+        {% endunless %}
+      {% endfor %}
+    {% endunless %}
+
+    {% comment %}
+      If we have a relevant collection.
+    {% endcomment %}
+
+    {% if found_a_collection %}
+
+      {% assign counter = 0 %}
+      {% assign break_at = related_products_number | times: 1 %}
+      {% assign current_product = product %}
+
+      {% case related_products_number %}
+        {% when '3' %}
+          {% assign grid_settings = 'row small-up-1 medium-up-3 large-up-3' %}
+        {% when '4' %}
+          {% assign grid_settings = 'row small-up-2 medium-up-4 large-up-4' %}
+        {% when '5' %}
+          {% assign grid_settings = 'row small-up-2 medium-up-5 large-up-5' %}
+        {% when '6' %}
+          {% assign grid_settings = 'row small-up-2 medium-up-6 large-up-6' %}
+      {% endcase %}
+
+      {% capture related_items %}
+        {% assign grid_item_width = 'column column-block' %}
+        {% for product in collection.products %}
+          {% unless product.handle == current_product.handle %}
+             {% unless same_vendor and current_product.vendor != product.vendor %}
+               {% unless same_type and current_product.type != product.type %}
+
+                {% include 'product-grid-item' %}
+
+                 {% assign counter = counter | plus: 1 %}
+                 {% if counter == break_at %}
+                   {% break %}
+                 {% endif %}
+               {% endunless %}
+            {% endunless %}
+          {% endunless %}
+        {% endfor %}
+      {% endcapture %}
+
+      {% assign related_items = related_items | trim %}
+
+      {% unless related_items == blank %}
+        <aside class="related-products js-animate-appear-show" itemscope itemtype="http://schema.org/Product">
+          {% unless heading == blank %}
+            <div class="row columns">
+              <h2 style="font-size: {{ section.settings.title_font_size }}px;" class="section-title related-products-title text-{{ section.settings.title_alignment }}">{{ heading }}</h2>
+            </div>
+          {% endunless %}
+          <div class="{{ grid_settings }} featured__grid {% if section.settings.is_carousel %}featured-carousel{% endif %} text-{{ section.settings.text_alignment }}">
+            {{ related_items }}
+          </div>
+        </aside>
+      {% endunless %}
+
+    {% endif %}
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Related products",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_related_products",
+      "label": "Enable Related Products",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "is_carousel",
+      "label": "Mobile Carousel",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "related_title",
+      "label": "Section title",
+      "default": "Related Products"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Section Title Alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "related_products_number",
+      "label": "Number of Products",
+      "default": "4",
+      "options": [
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        },
+        {
+          "value": "5",
+          "label": "5"
+        },
+        {
+          "value": "6",
+          "label": "6"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Section Title Font Size",
+      "default": 28
+    }
+  ]
+}
+{% endschema %}

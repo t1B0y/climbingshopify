@@ -1,0 +1,268 @@
+{% assign announcement_text = section.settings.announcement_text %}
+{% assign announcement_text_mobile = section.settings.announcement_text_mobile %}
+
+{% if template contains 'index' and section.settings.show_announcement_bar != 'hide' %}
+  {% assign enable_announcement_bar = true %}
+{% elsif section.settings.show_announcement_bar == 'all_pages' %}
+  {% assign enable_announcement_bar = true %}
+{% endif %}
+
+{% if template contains 'index' and settings.header_overlay_home %}
+  {% assign header_overlay = 'header-overlay' %}
+{% elsif template contains 'collection' and settings.header_overlay_collection %}
+  {% assign header_overlay = 'header-overlay' %}
+{% elsif template contains 'blog' and settings.header_overlay_blogs %}
+ {% assign header_overlay = 'header-overlay' %}
+{% elsif template contains 'article' and settings.header_overlay_blogs %}
+  {% assign header_overlay = 'header-overlay' %}
+{% elsif template contains 'page' and settings.header_overlay_page %}
+ {% assign header_overlay = 'header-overlay' %}
+{% endif %}
+
+{% assign logo_id = 'logo.png' %}
+{% if header_overlay != blank %}
+  {% assign logo_id = 'logo-white.png' %}
+{% endif %}
+
+{% if enable_announcement_bar %}
+  <div class="announcement-bar {% if section.settings.announcement_link != blank %}announcement_clickable{% endif %} js-animate-appear-show">
+    {% if section.settings.announcement_link != blank %}
+    <a href="{{ section.settings.announcement_link }}" class="announcement__link"></a>
+    {% endif %}
+    <div class="row columns announcement__text-wrap text-{{ section.settings.text_alignment }}">
+      {% unless announcement_text == blank %}
+        <div class="announcement__text {% if announcement_text_mobile != blank %}show-for-medium{% endif %}">
+          {{ announcement_text }}
+        </div>
+      {% endunless %}
+      {% unless announcement_text_mobile == blank %}
+        <div class="announcement__text show-for-small-only">
+          {{ announcement_text_mobile }}
+        </div>
+      {% endunless %}
+    </div>
+  </div>
+{% endif %}
+
+<div class="header-container {{ header_overlay }} js-animate-appear-show" data-section-id="{{ section.id }}" data-section-type="header">
+  <header id="main-header" class="main-header_menu-{{ section.settings.main_menu_alignment }}">
+    <div class="row">
+      <div class="small-3 medium-3 columns hide-for-large">
+        <div class="burger-container" data-toggle="mobileMenuSidebar">
+          <div id="burger">
+            <div class="bar topBar"></div>
+            <div class="bar btmBar"></div>
+          </div>
+        </div>
+      </div>
+      <div class="small-6 medium-6 large-3 columns logo-container">
+          <div class="logo-wrap">
+            {% if settings.logo_use_image %}
+              {% if template.name == 'index' %}
+                <h1 itemscope itemtype="http://schema.org/Organization" class="header__title_img">
+                  <a href="/" itemprop="url" class="logo__link">
+                    <img width="{{settings.logo_max_width}}" class="logo__img" src="{{ logo_id | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                  </a>
+                </h1>
+              {% else %}
+                <div itemscope itemtype="http://schema.org/Organization">
+                  <a href="/" itemprop="url" class="logo__link">
+                    <img width="{{settings.logo_max_width}}" class="logo__img" src="{{ logo_id | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                  </a>
+                </div>
+              {% endif %}
+            {% else %}
+              <h1 class="header__title" itemscope itemtype="http://schema.org/Organization">
+                <a href="/" itemprop="url">{{ shop.name }}</a>
+              </h1>
+            {% endif %}
+          </div>
+      </div>
+      <div class="large-6 columns show-for-large primary-menu-container">
+        {% assign main_menu_id = section.settings.main_menu %}
+        {% if main_menu_id != blank %}
+          <ul id="primary-menu" class="dropdown menu text-{{ section.settings.main_menu_alignment }}">
+            {% for link in linklists[main_menu_id].links %}
+              {% assign child_list_handle = link.title | handleize %}
+
+              {% if linklists[child_list_handle].links != blank %}
+                <li class="menu-item {% if link.active %} menu__active{% endif %} {% if linklists[child_list_handle].links.size != 0 %}menu-item_parent{% endif %}">
+                  <a href="{{ link.url }}" class="menu-item-link">{{ link.title }}</a>
+                  <ul class="sub-menu submenu">
+                    {% for childlink in linklists[child_list_handle].links %}
+                      {% assign grand_child_list_handle = childlink.title | handleize %}
+                      {% if linklists[grand_child_list_handle].links != blank %}
+                        <li class="menu-item {% if childlink.active %} menu__active{% endif %}">
+                          <a href="{{ childlink.url }}" class="menu-item-link">{{ childlink.title | escape }}</a>
+                          <ul class="sub-menu submenu">
+                            {% for grand_childlink in linklists[grand_child_list_handle].links %}
+                              <li class="menu-item {% if grand_childlink.active %} menu__active{% endif %}">
+                                <a href="{{ grand_childlink.url }}" class="menu-item-link">{{ grand_childlink.title | escape }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        </li>
+                      {% else %}
+                        <li class="menu-item {% if childlink.active %} menu__active{% endif %}">
+                          <a href="{{ childlink.url }}" class="menu-item-link">{{ childlink.title | escape }}</a>
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% else %}
+                <li class="menu-item {% if link.active %} menu__active{% endif %}">
+                  <a href="{{ link.url }}" class="menu-item-link">{{ link.title }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="small-3 medium-3 large-3 columns text-right right-menu-container">
+        <ul id="header-right-menu" class="menu">
+          {% if section.settings.header_show_search %}
+            <li class="menu-item menu-item_search show-for-large">
+              <a class="header__search-link" href="/search">
+                <span class="icon icon-search"></span>
+              </a>
+            </li>
+          {% endif %}
+
+          {% if shop.customer_accounts_enabled and settings.account_link %}
+          <li class="menu-item menu-item_user show-for-large">
+            {% if customer %}
+            <a class="menu-item-link header__account-link" href="/account">
+            {% else %}
+            <a class="menu-item-link header__account-link" href="/account/login">
+            {% endif %}
+              <svg id="user-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g id="user-icon-g"><path id="head" d="M31.91,34.54a14,14,0,1,0-14-14A14,14,0,0,0,31.91,34.54Z"/><path id="shoulders" d="M9.46,57.46H54.54a1.7,1.7,0,0,0,1.71-1.71A16.31,16.31,0,0,0,40,39.46H24A16.31,16.31,0,0,0,7.75,55.75,1.7,1.7,0,0,0,9.46,57.46Z"/></g></svg>
+            </a>
+          </li>
+          {% endif %}
+
+          <li class="menu-item menu-item_cart header__cart" {% if settings.ajax_cart_method == "drawer" %}data-toggle="cartSidebar"{% endif %}>
+            <a class="menu-item-link" {% if settings.ajax_cart_method != "drawer" %}href="/cart"{% endif %}>
+              <svg id="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path id="cart-icon-shape" data-name="cart" d="M55.06,38.32a2,2,0,0,0,1.77-1.64l3.77-21.17a2,2,0,0,0-1.88-2.35L12.12,11,6.63,6.46A2,2,0,1,0,4.09,9.54l5.53,4.55,7.81,25.52-2.59,4.93A3.55,3.55,0,0,0,18,49.74h2.71a4.64,4.64,0,1,0,5.74,0H46a4.64,4.64,0,1,0,5.74,0h4.68a2,2,0,0,0,0-4H18.73l2.13-4Z"/></svg>
+              <div class="header__cart-count {% if cart.item_count == 0 %}hidden-count{% endif %}">
+                <span id="CartCount">{{ cart.item_count }}</span>
+              </div>
+              <span class="visually-hidden">{{ 'layout.cart.title' | t | upcase }}
+                <span id="CartCost">{{ cart.total_price | money }}</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+</div>
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Announcement Bar"
+      },
+      {
+        "type": "select",
+        "id": "show_announcement_bar",
+        "label": "Show Announcement Bar",
+        "default": "home",
+        "options": [
+          {
+            "value": "hide",
+            "label": "Hide"
+          },
+          {
+            "value": "home",
+            "label": "Only Homepage"
+          },
+          {
+            "value": "all_pages",
+            "label": "All Pages"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Announcement Bar"
+      },
+      {
+        "type": "richtext",
+        "id": "announcement_text",
+        "label": "Announcement Text",
+        "default": "<p>Add your announcement here</p>"
+      },
+      {
+        "type": "richtext",
+        "id": "announcement_text_mobile",
+        "label": "Announcement Text (Mobile)",
+        "default": "<p>Add your announcement for mobile</p>"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "Text Alignment",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "url",
+        "id": "announcement_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Desktop Header Settings"
+      },
+      {
+        "type": "link_list",
+        "id": "main_menu",
+        "label": "Choose Main Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "select",
+        "id": "main_menu_alignment",
+        "label": "Main Menu Alignment",
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "header_show_search",
+        "label": "Display Search Icon",
+        "default": true
+      }    
+    ]
+  }
+{% endschema %}

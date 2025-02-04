@@ -1,0 +1,42 @@
+{% if the_title %}
+  {% assign page_title = the_title %}
+{% else %}
+  {% capture page_title %}<h1 class="page__header__title {% if snippet_instance.settings.underline_title %}title-underline{% endif %} section__title-style">{{page.title}}</h1>{% endcapture %}
+{% endif %}
+
+{% if snippet_instance.settings.section_identifier != blank %}
+  {% assign section_id = snippet_instance.settings.section_identifier %}
+{% else %}
+  {%- capture section_id -%} header-{{-snippet_instance.id-}} {%- endcapture -%}
+{% endif %}
+
+{% if bg_image == blank %}
+  {% assign bg_image = snippet_instance.settings.background_image %}
+{% endif %}
+
+{% if snippet_instance.settings.enable_custom_styles %}
+  {% include 'section-styles', instance_settings: snippet_instance.settings, instance_settings.background_image: bg_image %}
+{% endif %}
+
+{% assign bg_image_style = snippet_instance.settings.background_image_style %}
+{% if bg_image != blank and bg_image_style == 'cover' %} {% assign lazyload = 'lazyload' %} {% endif %}
+
+{% if snippet_instance.settings.parallax and snippet_instance.settings.enable_custom_styles %}
+  {% assign parallax_class = 'section__content_parallax' %}
+{% endif %}
+<div id="{{section_id}}" class="section page__header {{ parallax_class }}">
+  <div class="{{ lazyload }} content-section {{ section_class }} section__background"
+    {% if bg_image != blank and bg_image_style == 'cover' and snippet_instance.settings.enable_custom_styles %}
+      data-bgset="{% include 'bgset', image: bg_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+    {% endif %}>
+    <div class="background_darken" style="background:rgba(0,0,0,{{ snippet_instance.settings.darken | divided_by: 100.00 }})"></div>
+    <div class="content-section__inner row columns page__header__content {% if snippet_instance.settings.alignment == 'center' %}text-center{% endif %} js-animate-appear-show">
+      {{ page_title }}
+      <div class="page__header__description section__heading-style">
+        {{ the_description }}
+      </div>
+    </div>
+  </div>
+</div>

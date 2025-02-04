@@ -1,0 +1,197 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+<div data-section-id="{{ section.id }}" data-section-type="product-page"  itemscope itemtype="http://schema.org/Product">
+  <meta itemprop="name" content="{{ product.title }}">
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: '800x' }}">
+
+  <div class="row product-single js-animate-appear-show">
+    {% case section.settings.images_width %}
+      {% when '30' %}
+        {% assign product_images_grid = 'large-4 columns' %}
+        {% assign product_info_grid = 'large-8 columns' %}
+      {% when '50' %}
+        {% assign product_images_grid = 'large-6 columns' %}
+        {% assign product_info_grid = 'large-6 columns' %}
+      {% when '60' %}
+        {% assign product_images_grid = 'large-7 columns' %}
+        {% assign product_info_grid = 'large-5 columns' %}
+      {% when '70' %}
+        {% assign product_images_grid = 'large-8 columns' %}
+        {% assign product_info_grid = 'large-4 columns' %}
+    {% endcase %}
+    <div class="{{ product_images_grid }} product-images">
+      <div class="product-images__container">
+        <div class="{% if product.images.size > 1 %}is-carousel{% endif %} {% if section.settings.enable_lightbox %}images-lightbox{% endif %}" id="ProductImages" data-featured-img="{{product.selected_or_first_available_variant.featured_image}}">
+          {% for image in product.images %}
+            <div class="product-image__slide" data-img-id="{{image.id}}">
+              {%- assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+              {% if section.settings.enable_lightbox %}
+              <a class="product__image__item" title="{{ image.alt | escape }}" href="{{ image | img_url: 'master' }}">
+              {% else %}
+              <div class="product__image__item">
+              {% endif %}
+                <img class="lazyload {% if forloop.index == 1 %} __first-image {% endif %}"
+                src="{{ image | img_url: '300x300' }}"
+                data-src="{{ img_url }}"
+                data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                data-aspectratio="{{ image.aspect_ratio }}"
+                data-sizes="auto"
+                alt="{{ image.alt | escape }}">
+              {% if section.settings.enable_lightbox %}
+              </a>
+              {% else %}
+              </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% if product.images.size > 1 %}
+        <div class="product__thumbs row medium-up-5 large-up-5" id="ProductThumbs">
+          {% for image in product.images %}
+            <div class="product__thumb column {% if forloop.index0 == 0 %}active{% endif %}" data-thumb-id="{{image.id}}">
+              <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="{{ product_info_grid }} product-card">
+      <div class="product-info__container">
+        <h1 class="product-title" itemprop="name">{{ product.title }}</h1>
+        {% if section.settings.display_product_vendor %}
+          <div class="product-vendor">{{ product.vendor | link_to_vendor }}</div>
+        {% endif %}
+
+        {% if settings.add_spr_markup %}
+          <div class="spr-badge-container">
+            <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+          </div>
+        {% endif %}
+
+        <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+          <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+          <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+          {% comment %}
+            ID addToCartForm is a selector for the ajax cart plugin
+          {% endcomment %}
+          <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical">
+
+            <div class="product__price__wrap">
+              {% if product.compare_at_price_max > product.price %}
+                <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+                <s id="ComparePrice">
+                  <span class="money">{{ current_variant.compare_at_price | money }}</span>
+                </s>
+              {% endif %}
+
+              <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+              <span id="ProductPrice" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
+                <span class="money">{{ current_variant.price | money }}</span>
+              </span>
+            </div>
+
+            <div class="product__variants__wrap">
+              <div class="product__variants_no-js">
+                <select name="id" id="productSelect" class="product-single__variants">
+                  {% for variant in product.variants %}
+                    {% if variant.available %}
+                      <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+                    {% else %}
+                      <option disabled="disabled">
+                        {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+
+              {% if product.available and product.variants.size > 0 %}
+                {% for option in product.options %}
+                  {% include 'swatch' with option %}
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="visually-hidden">
+              <label for="Quantity" class="quantity-selector ">{{ 'products.product.quantity' | t }}</label>
+              <input type="number" id="Quantity" name="quantity" value="1" min="1" class="quantity-selector">
+            </div>
+
+            <button type="submit" name="add" id="AddToCart" class="button">
+              <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+            </button>
+          </form>
+        </div>
+
+        <div class="product-description rte" itemprop="description">
+          {{ product.description }}
+        </div>
+
+        {% if section.settings.show_share_buttons %}
+          {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% comment %}
+    Shopify Product App Reviews Markup
+  {% endcomment %}
+  {% if settings.add_spr_markup %}
+  <div class="product__reviews row columns">
+    <div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+  </div>
+  {% endif %}
+</div>
+
+
+{% schema %}
+{
+  "name": "Product Page",
+  "settings": [
+    {
+      "type": "select",
+      "id": "images_width",
+      "label": "Images Width (Desktop)",
+      "default": "50",
+      "options": [
+        {
+          "value": "30",
+          "label": "30%"
+        },
+        {
+          "value": "50",
+          "label": "50%"
+        },
+        {
+          "value": "60",
+          "label": "60%"
+        },
+        {
+          "value": "70",
+          "label": "70%"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "display_product_vendor",
+      "label": "Display Product Vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_lightbox",
+      "label": "Images Full Screen Mode",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "Show Share Buttons",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

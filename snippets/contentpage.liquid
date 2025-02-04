@@ -1,0 +1,25 @@
+{% case snippet_instance.settings.text_width %}
+  {% when '1' %}
+    {% assign text_layout = 'medium-12 large-12 medium-centered large-centered columns' %}
+  {% when '1-2' %}
+    {% assign text_layout = 'medium-6 large-6 medium-centered large-centered columns' %}
+  {% when '1-3' %}
+    {% assign text_layout = 'medium-4 large-4 medium-centered large-centered columns' %}
+  {% when '2-3' %}
+    {% assign text_layout = 'medium-8 large-8 medium-centered large-centered columns' %}
+  {% when '3-4' %}
+    {% assign text_layout = 'medium-9 large-9 medium-centered large-centered columns' %}
+{% endcase %}
+
+<div id="content-{{ content_id }}" class="row content-section__inner">
+  <div class="{{ text_layout }} text__content js-animate-appear-show">
+    {% unless snippet_instance.settings.title == blank %}
+      <h2 class="section-title section__title-style text-{{ snippet_instance.settings.title_alignment }}">
+        {{ snippet_instance.settings.title | escape }}
+      </h2>
+    {% endunless %}
+    {% unless snippet_instance.settings.page_handle == blank %}
+      <div class="rte text__text section__text-style">{{ pages[snippet_instance.settings.page_handle].content }}</div>
+    {% endunless %}
+  </div>
+</div>

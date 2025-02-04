@@ -1,0 +1,107 @@
+{% paginate collection.products by settings.collection_items_count %}
+
+<div class="collection-header-wrap">
+  {% section 'collection-header' %}
+</div>
+<div class="collection-page text-{{ settings.collection_text_alignment }}">
+  {% if settings.collection_display_collections and collections.size %}
+    <div class="collection-nav collection-nav_collections row js-animate-appear-show">
+      {% unless settings.collection_nav_title == blank %}
+        <h4 class="collection-nav__title columns">{{ settings.collection_nav_title }}</h4>
+      {% endunless %}
+      <ul class="menu">
+        {% for the_collection in collections %}
+          {% if the_collection.handle and the_collection.handle != 'frontpage' %}
+            <li{% if the_collection.handle == collection.handle %} class="__active"{% endif %}>
+              <a href="{{ the_collection.url }}">
+                {{ the_collection.title }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if settings.collection_display_types and shop.types.size %}
+    <div class="collection-nav collection-nav_types row js-animate-appear-show">
+      {% unless settings.collection_types_nav_title == blank %}
+        <h4 class="collection-nav__title columns">{{ settings.collection_types_nav_title }}</h4>
+      {% endunless %}
+      <ul class="menu">
+        {% for product_type in shop.types %}
+        <li {% if product_type == collection.title %} class="__active"{% endif %}>
+          {{ product_type | link_to_type }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if settings.collection_display_tags %}
+    {% if collection.handle != 'all' and collection.all_tags.size > 0 %}
+      <div class="collection-nav collection-nav_tags row js-animate-appear-show">
+        <h4 class="collection-nav__title columns">{{ 'collections.sidebar.tags' | t }}</h4>
+        <ul class="menu">
+          <li{% unless current_tags %} class="__active"{% endunless %}>
+            {% if collection.handle %}
+              <a href="/collections/{{ collection.handle }}">
+                {{ 'collections.sidebar.all_of_tags' | t }}
+              </a>
+            {% endif %}
+          </li>
+
+          {% for tag in collection.all_tags %}
+            <li class="{% if current_tags contains tag %}__active{% endif %}">
+              {{ tag | capitalize | link_to_tag: tag  }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  {% if settings.collection_display_sorting %}
+  <div class="collection-nav collection-nav_sort row js-animate-appear-show">
+    <h4 class="collection-nav__title columns">{{ 'collections.sorting.title' | t }}</h4>
+    <div class="columns">
+      {% include 'collection-sorting' %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="collection__grid">
+    <div class="collection-content js-animate-appear-show">
+      {% for product in collection.products %}
+        {% if forloop.index == 1 %}
+        <div class="row small-up-{{ settings.collection_row_mobile }} medium-up-{{ settings.collection_row_tablet }} large-up-{{ settings.collection_row_desktop }} collection__products-grid">
+        {% endif %}
+          {% assign grid_item_width = 'column column-block' %}
+          {% include 'product-grid-item' %}
+        {% if forloop.last %}
+        </div>
+        {% endif %}
+      {% else %}
+        {% if collection.handle == 'all' and current_tags == '' %}
+          {% unless emptyState %}
+            {{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+            {% assign emptyState = true %}
+          {% endunless %}
+          {% include 'onboarding-empty-collection' %}
+        {% else %}
+          <div class="row columns">
+            <p>{{ 'collections.general.no_matches' | t }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if paginate.pages > 1 %}
+        <div class="pagination">
+          {{ paginate | default_pagination | replace: '&laquo; Previous', '<span class="icon icon-angle-left"></span>' | replace: 'Next &raquo;', '<span class="icon icon-angle-right"></span>' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endpaginate %}

@@ -1,0 +1,17 @@
+<div class="off-canvas position-right" id="cartSidebar" data-transition="overlap">
+  <div class="cart-sidebar-title">
+    {{ 'cart.general.title' | t }}
+
+    <button class="close-button" aria-label="Close menu" type="button" data-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div id="cartSidebarContainer">
+    {% if cart.item_count == 0 %}
+      <p class="row columns">
+        {{ 'cart.general.empty' | t }}
+      </p>
+    {% endif %}
+  </div>
+</div>

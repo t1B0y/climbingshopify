@@ -1,0 +1,487 @@
+{% if section.settings.display_page_header %}
+  {% include 'page-header', snippet_instance: section %}
+{% endif %}
+
+<div class="content-section page-template custom-page"  data-section-id="{{ section.id }}" data-section-type="page-template">
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% comment %}
+        Page Content
+      {% endcomment %}
+      {% when 'page-content' %}
+        <div {{ block.shopify_attributes }}>
+          {%- capture section_id -%} block-{{-block.id-}} {%- endcapture -%}
+          {% if block.settings.enable_custom_styles %}
+            {% include 'section-styles', instance_settings: block.settings %}
+          {% endif %}
+          <div id="{{ section_id }}">
+            <div class="content-section custom-page-content">
+              <div class="row js-animate-appear-show">
+                {% case block.settings.content_width %}
+                  {% when '1' %}
+                    {% assign content_layout = 'medium-12 large-12 columns' %}
+                  {% when '1-2' %}
+                    {% assign content_layout = 'medium-6 large-6 columns' %}
+                  {% when '1-3' %}
+                    {% assign content_layout = 'medium-6 large-4 columns' %}
+                  {% when '2-3' %}
+                    {% assign content_layout = 'medium-10 large-8 columns' %}
+                  {% when '3-4' %}
+                    {% assign content_layout = 'medium-10 large-9 columns' %}
+                {% endcase %}
+
+                <div class="{{ content_layout }} medium-centered large-centered page__content">
+                  <div class="rte">
+                    {{ page.content }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {% comment %}
+        Custom Html
+      {% endcomment %}
+      {% when 'html' %}
+        <div {{ block.shopify_attributes }}>
+          {%- include 'section-helper', snippet_instance: block, snippet_type: 'block', snippet_name: 'custom-html', section_class: 'html-section', section_type: 'custom-html' -%}
+        </div>
+
+      {% comment %}
+        Youtube Video
+      {% endcomment %}
+      {% when 'youtube-video' %}
+        <div {{ block.shopify_attributes }}>
+          {%- include 'section-helper', snippet_instance: block, snippet_type: 'block', snippet_name: 'youtube-video', section_class: 'video-section', section_type: 'youtube-video' -%}
+        </div>
+
+    {% endcase %}
+  {% endfor %}
+</div>
+
+
+{% schema %}
+{
+  "name": "Page Template",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_page_header",
+      "label": "Display Page Header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "underline_title",
+      "label": "Underline Title",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_custom_styles",
+      "label": "Enable Custom Styles",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Section Height",
+      "default": 250
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Title Alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Background Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "select",
+      "id": "background_image_style",
+      "label": "Background Image Style",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "repeat",
+          "label": "Repeat"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "parallax",
+      "label": "Enable Parallax Effect",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "darken",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Darken Background",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "page-content",
+      "name": "Page Content",
+      "settings": [
+        {
+          "type": "select",
+          "id": "content_width",
+          "label": "Content Width",
+          "default": "2-3",
+          "options": [
+            {
+              "value": "1",
+              "label": "Full"
+            },
+            {
+              "value": "1-2",
+              "label": "1/2"
+            },
+            {
+              "value": "1-3",
+              "label": "1/3"
+            },
+            {
+              "value": "2-3",
+              "label": "2/3"
+            },
+            {
+              "value": "3-4",
+              "label": "3/4"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_custom_styles",
+          "label": "Enable Custom Styles",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color"
+        },
+        {
+          "type": "range",
+          "id": "text_font_size",
+          "min": 12,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Text Font Size",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "spacing_top",
+          "min": 0,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "label": "Spacing: Top",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom",
+          "min": 0,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "label": "Spacing: Bottom",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "type": "html",
+      "name": "HTML",
+      "settings": [
+        {
+          "type": "header",
+          "content": "General Settings"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Section Title"
+        },
+        {
+          "type": "select",
+          "id": "title_alignment",
+          "label": "Title Alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "row_wrap",
+          "label": "Wrap in a row",
+          "default": true
+        },
+        {
+          "type": "html",
+          "id": "html",
+          "label": "Html"
+        },
+        {
+          "type": "header",
+          "content": "Content Style"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_custom_styles",
+          "label": "Enable Custom Styles",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title Color"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color"
+        },
+        {
+          "type": "range",
+          "id": "title_font_size",
+          "min": 12,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Title Font Size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "text_font_size",
+          "min": 12,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Text Font Size",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "spacing_top",
+          "min": 0,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "label": "Spacing: Top",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom",
+          "min": 0,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "label": "Spacing: Bottom",
+          "default": 50
+        }
+      ]
+    },
+    {
+      "type": "youtube-video",
+      "name": "Youtube Video",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Content Settings"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Headline"
+        },
+        {
+          "type": "select",
+          "id": "title_alignment",
+          "label": "Title Alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            }
+          ]
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Video link",
+          "accept": ["youtube"],
+          "default": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc"
+        },
+        {
+          "type": "image_picker",
+          "id": "cover_image",
+          "label": "Cover Image"
+        },
+        {
+          "type": "select",
+          "id": "video_width",
+          "label": "Video Width",
+          "default": "1-2",
+          "options": [
+            {
+              "value": "1",
+              "label": "Full"
+            },
+            {
+              "value": "1-2",
+              "label": "1/2"
+            },
+            {
+              "value": "1-3",
+              "label": "1/3"
+            },
+            {
+              "value": "2-3",
+              "label": "2/3"
+            },
+            {
+              "value": "3-4",
+              "label": "3/4"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Content Style"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_custom_styles",
+          "label": "Enable Custom Styles",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Section Title Color"
+        },
+        {
+          "type": "range",
+          "id": "title_font_size",
+          "min": 12,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Section Title Size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "spacing_top",
+          "min": 0,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "label": "Spacing: Top",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom",
+          "min": 0,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "label": "Spacing: Bottom",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "default": {
+     "blocks": [
+       {
+         "type": "page-content"
+       }
+     ]
+   }
+}
+{% endschema %}

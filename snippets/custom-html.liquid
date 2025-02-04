@@ -1,0 +1,16 @@
+<div class="content-section__inner html-section__container js-animate-appear-show {% if snippet_instance.settings.row_wrap %}html-section_wrapped{% endif %}">
+  {% unless snippet_instance.settings.title == blank %}
+    <div class="row  text-{{ snippet_instance.settings.title_alignment }}">
+      <h2 class="columns section-title section__title-style">{{ snippet_instance.settings.title }}</h2>
+    </div>
+  {% endunless %}
+  {% if snippet_instance.settings.row_wrap %}
+  <div class="rte row columns">
+  {% endif %}
+    {% unless snippet_instance.settings.html == blank %}
+      {{ snippet_instance.settings.html }}
+    {% endunless %}
+  {% if snippet_instance.settings.row_wrap %}
+  </div>
+  {% endif %}
+</div>

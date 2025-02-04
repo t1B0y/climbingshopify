@@ -1,0 +1,184 @@
+<div data-section-id="{{ section.id }}" data-section-type="footer">
+  <footer id="site-footer">
+    {% if section.blocks.size != 0 %}
+      <div class="row small-up-1 medium-up-3 large-up-3 footer-widgets">
+        {% for block in section.blocks %}
+          <div class="column footer__widget footer__widget__{{block.type}}">
+            <h3 class="widget__title">{{ block.settings.title }}</h3>
+
+            <div class="widget__content">
+              {% case block.type %}
+                {% when 'footer-menu' %}
+                  <ul class="vertical menu footer__menu">
+                    {% for link in linklists[block.settings.menu_id].links %}
+                      <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    {% endfor %}
+                  </ul>
+
+                {% when 'newsletter' %}
+                  <div class="footer__newsletter__info">{{ block.settings.info }}</div>
+                  {% include 'newsletter-form', snippet_instance: block %}
+
+                {% when 'html' %}
+                  {{ block.settings.html }}
+
+                {% when 'text' %}
+                  <div>
+                    {{ block.settings.text }}
+                    {% if block.settings.show_social_links %}
+                      {% include 'social-media-links', snippet_instance: block %}
+                    {% endif %}
+                  </div>
+
+              {% endcase %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="footer-bottom">
+      <div class="row">
+        <div class="small-12 medium-6 large-6 columns footer__copyright">
+          <div class="footer__copyright__inner">
+           {% unless section.settings.footer_copyright == blank %}{{section.settings.footer_copyright}} {% endunless %}           
+          </div>
+        </div>
+
+        {% if section.settings.show_payment_icons %}
+          <div class="small-12 medium-6 large-6 columns footer__payment">
+            {% include 'payment-types-list' %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </footer>
+</div>
+
+{% schema %}
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_icons",
+        "label": "Display Payment Icons",
+        "default": true
+      },
+      {
+        "type": "richtext",
+        "id": "footer_copyright",
+        "label": "Copyright text",
+        "default": "<p>©</p>"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "footer-menu",
+        "name": "Menu",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Menu Title",
+            "default": "Menu"
+          },
+          {
+            "type": "link_list",
+            "id": "menu_id",
+            "label": "Choose Menu",
+            "default": "footer"
+          }
+        ]
+      },
+      {
+        "type": "newsletter",
+        "name": "Newsletter",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Join the newsletter"
+          },
+          {
+            "type": "richtext",
+            "id": "info",
+            "label": "Description",
+            "default": "<p>Add some text here.</p>"
+          },
+          {
+            "type": "text",
+            "id": "newsletter_form_action",
+            "label": "MailChimp form action URL",
+            "info": "[Where do I find my MailChimp form action URL?](https:\/\/shopify.barrelny.com\/where-do-i-find-the-mailchimp-signup-url\/)"
+          },
+          {
+            "type": "text",
+            "id": "button_text",
+            "label": "Button Text",
+            "default": "Subscribe"
+          }
+        ]
+      },
+      {
+        "type": "html",
+        "name": "Html",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Custom Html"
+          },
+          {
+            "type": "html",
+            "id": "html",
+            "label": "Html"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "name": "Text",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Custom Text"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Add some text here.</p>"
+          },
+          {
+            "type": "checkbox",
+            "id": "show_social_links",
+            "label": "Display Social Network Icons",
+            "default": true
+          }
+        ]
+      }
+    ],
+    "default": {
+      "blocks": [
+        {
+          "type": "footer-menu"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "newsletter"
+        }
+      ]
+    }
+  }
+{% endschema %}

@@ -1,0 +1,133 @@
+{%- capture section_id -%} header-{{-section.id-}} {%- endcapture -%}
+
+{% assign bg_image = article.image %}
+{% assign bg_image_style = section.settings.background_image_style %}
+
+{% if section.settings.enable_custom_styles %}
+  {% include 'section-styles', instance_settings: section.settings %}
+{% endif %}
+
+{% if section.settings.parallax and section.settings.enable_custom_styles %}
+  {% assign parallax_class = 'section__content_parallax' %}
+{% endif %}
+<div id="{{section_id}}" class="section js-animate-appear-show page__header page__header_article {{ parallax_class }} {% unless settings.article_enable_sidebar %}text-center{% endunless %}">
+  <div class="lazyload content-section {{ section_class }} section__background"
+    {% if bg_image != blank and section.settings.enable_custom_styles %}
+      data-bgset="{% include 'bgset', image: bg_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+    {% endif %}>
+    <div class="background_darken" style="background:rgba(0,0,0,{{ section.settings.darken | divided_by: 100.00 }})"></div>
+    <div class="content-section__inner row columns page__header__content text-{{ section.settings.alignment }} ">
+      <div class="row">
+        <div class="large-9 large-centered columns">
+          <div class="article-meta section__heading-style">
+            <span class="post__date"><time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time></span>
+
+            {% include 'tags-article' %}
+
+            {% if settings.blog_post_author %}
+              <span class="article-meta__item post__author">{{ 'blogs.article.by_author_html' | t: author: article.author }}</span>
+            {% endif %}
+
+            {% if blog.comments_enabled? %}
+              <a class="article-meta__item post__comments-count" href="{{ article.url }}#comments">
+                {{ 'blogs.comments.with_count' | t: count: article.comments_count }}
+              </a>
+            {% endif %}
+          </div>
+          <h1 class="article__title section__title-style">{{ article.title }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Article Header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_custom_styles",
+      "label": "Enable Custom Styles",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "min": 200,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Section Height",
+      "default": 400
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Article Date Color"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Title Font Size",
+      "default": 42
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Title Alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Background Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "parallax",
+      "label": "Enable Parallax Effect",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "darken",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Darken Background",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

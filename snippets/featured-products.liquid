@@ -1,0 +1,42 @@
+<div class="content-section__inner">
+  {% unless snippet_instance.settings.title == blank %}
+    <div class="row text-{{ snippet_instance.settings.title_alignment }} js-animate-appear-show">
+      <h2 class="columns section-title section__title-style">{{ snippet_instance.settings.title }}</h2>
+    </div>
+  {% endunless %}
+
+  {% case snippet_instance.settings.grid %}
+    {% when '2' %}
+      {% assign grid_settings = 'row small-up-1 medium-up-2 large-up-2' %}
+    {% when '3' %}
+      {% assign grid_settings = 'row small-up-1 medium-up-3 large-up-3' %}
+    {% when '4' %}
+      {% assign grid_settings = 'row small-up-2 medium-up-4 large-up-4' %}
+    {% when '5' %}
+      {% assign grid_settings = 'row small-up-2 medium-up-5 large-up-5' %}
+    {% when '6' %}
+      {% assign grid_settings = 'row small-up-2 medium-up-6 large-up-6' %}
+  {% endcase %}
+
+  {% assign collection_id = snippet_instance.settings.collection %}
+  {% if collection_id == blank %}
+    {% assign collection_id = 'frontpage' %}
+  {% endif %}
+
+  {% if collections[collection_id].products.size > 0 %}
+    <div class="featured__grid__wrap text-{{ snippet_instance.settings.text_alignment }}">
+      <div class="{{ grid_settings }} featured__grid {% if snippet_instance.settings.is_carousel %}featured-carousel{% endif %} js-animate-appear-show">
+        {% assign grid_item_width = 'column column-block' %}
+        {% for product in collections[collection_id].products limit:snippet_instance.settings.total %}
+          {% include 'product-grid-item' %}
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {% unless emptyState %}
+      {{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+      {% assign emptyState = true %}
+    {% endunless %}
+    {% include 'onboarding-featured-products' %}
+  {% endif %}
+</div>

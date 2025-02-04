@@ -1,0 +1,146 @@
+<!-- /snippets/ajax-cart-template.liquid -->
+{% comment %}
+
+  This snippet provides the default handlebars.js templates for
+  the ajax cart plugin. Use the raw liquid tags to keep the
+  handlebar.js template tags as available hooks.
+
+{% endcomment %}
+  <script id="CartTemplate" type="text/template">
+  {% raw %}
+    <form action="/cart" method="post" novalidate class="cart ajaxcart">
+      <div class="ajaxcart__inner">
+        {{#items}}
+        <div class="ajaxcart__product">
+          <div class="ajaxcart__row" data-line="{{line}}">
+            <div class="row">
+              <div class="small-4 medium-4 large-4 columns __product-img">
+                <a href="{{url}}" class="ajaxcart__product-image"><img src="{{img}}" alt="{{name}}"></a>
+              </div>
+              <div class="small-8 medium-8 large-8 columns cart__product__info">
+                <p>
+                  <a href="{{url}}" class="ajaxcart__product-name">{{name}}</a>
+                  {{#if variation}}
+                    <span class="ajaxcart__product-meta">{{variation}}</span>
+                  {{/if}}
+                  {{#properties}}
+                    {{#each this}}
+                      {{#if this}}
+                        <span class="ajaxcart__product-meta">{{@key}}: {{this}}</span>
+                      {{/if}}
+                    {{/each}}
+                  {{/properties}}
+                  {% endraw %}{% if settings.cart_vendor_enable %}{% raw %}
+                    <span class="ajaxcart__product-meta">{{ vendor }}</span>
+                  {% endraw %}{% endif %}{% raw %}
+                </p>
+
+                <div class="row">
+                  <div class="small-6 medium-6 large-6 columns cart__product__quantity">
+                    <div class="ajaxcart__qty">
+                      <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--minus" data-id="{{key}}" data-qty="{{itemMinus}}" data-line="{{line}}">
+                        <span class="__minus">&minus;</span>
+                        <span class="visually-hidden">{% endraw %}{{ 'cart.general.reduce_quantity' | t }}{% raw %}</span>
+                      </button>
+                      <input type="text" name="updates[]" class="ajaxcart__qty-num" value="{{itemQty}}" min="0" data-id="{{key}}" data-line="{{line}}" aria-label="quantity" pattern="[0-9]*">
+                      <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--plus" data-id="{{key}}" data-line="{{line}}" data-qty="{{itemAdd}}">
+                        <span class="__plus">&#43;</span>
+                        <span class="visually-hidden">{% endraw %}{{ 'cart.general.increase_quantity' | t }}{% raw %}</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="small-6 medium-6 large-6 columns cart__product__price">
+                    {{#if discountsApplied}}
+                      <small class="ajaxcart-item__price-strikethrough"><s><span class="money">{{{originalLinePrice}}}</span></s></small>
+                      <br><span class="money">{{{linePrice}}}</span>
+                    {{else}}
+                      <span class="money">{{{linePrice}}}</span>
+                    {{/if}}
+                    </div>
+                  </div>
+                  {{#if discountsApplied}}
+                    <div class="row">
+                      <div class="columns text-right">
+                        {{#each discounts}}
+                          <small class="ajaxcart-item__discount">{{ this.title }}</small><br>
+                        {{/each}}
+                      </div>
+                    </div>
+                  {{/if}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/items}}
+
+        {% endraw %}{% if settings.cart_notes_enable %}{% raw %}
+          <div class="row columns">
+            <label for="CartSpecialInstructions">{% endraw %}{{ 'cart.general.note' | t }}{% raw %}</label>
+            <textarea name="note" class="input-full" id="CartSpecialInstructions">{{ note }}</textarea>
+          </div>
+        {% endraw %}{% endif %}{% raw %}
+      </div>
+      <div class="ajaxcart__footer">
+        <div class="row cart__subtotal">
+          <div class="small-6 medium-6 large-6 columns">
+            <p>{% endraw %}{{ 'cart.general.subtotal' | t }}{% raw %}</p>
+          </div>
+          <div class="small-6 medium-6 large-6 columns text-right cart__subtotal-price">
+            <p><span class="money">{{{totalPrice}}}</span></p>
+          </div>
+        </div>
+        <div class="row columns">
+          {{#if totalCartDiscount}}
+            <p class="ajaxcart__savings text-center"><em>{{{totalCartDiscount}}}</em></p>
+          {{/if}}
+        </div>
+        <p class="row columns text-center cart__shipping-text">{% endraw %}
+          {{ 'cart.general.shipping_at_checkout' | t }}
+          {% if settings.enable_currency_switch %}
+            {{ 'cart.general.order_currency' | t: shop_currency: shop.currency }}
+          {% endif %}
+          {% raw %}</p>
+        <div class="row columns text-center">
+          <button type="submit" class="button cart__checkout expanded" name="checkout">
+            {% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}
+          </button>
+        </div>
+        {% endraw %}{% if additional_checkout_buttons %}
+          <div class="row columns additional_checkout_buttons">{{ content_for_additional_checkout_buttons }}</div>
+        {% endif %}{% raw %}
+      </div>
+    </form>
+  {% endraw %}
+  </script>
+  <script id="AjaxQty" type="text/template">
+  {% raw %}
+    <div class="ajaxcart__qty">
+      <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--minus" data-id="{{key}}" data-qty="{{itemMinus}}">
+        <span class="__minus">&minus;</span>
+        <span class="visually-hidden">{% endraw %}{{ 'cart.general.reduce_quantity' | t }}{% raw %}</span>
+      </button>
+      <input type="text" class="ajaxcart__qty-num" value="{{itemQty}}" min="0" data-id="{{key}}" aria-label="quantity" pattern="[0-9]*">
+      <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--plus" data-id="{{key}}" data-qty="{{itemAdd}}">
+        <span class="__plus">&#43;</span>
+        <span class="visually-hidden">{% endraw %}{{ 'cart.general.increase_quantity' | t }}{% raw %}</span>
+      </button>
+    </div>
+  {% endraw %}
+  </script>
+  <script id="JsQty" type="text/template">
+  {% raw %}
+    <div class="js-qty">
+      <button type="button" class="js-qty__adjust js-qty__adjust--minus" data-id="{{key}}" data-qty="{{itemMinus}}">
+        <span class="__minus">&minus;</span>
+        <span class="visually-hidden">{% endraw %}{{ 'cart.general.reduce_quantity' | t }}{% raw %}</span>
+      </button>
+      <input type="text" class="js-qty__num" value="{{itemQty}}" min="1" data-id="{{key}}" aria-label="quantity" pattern="[0-9]*" name="{{inputName}}" id="{{inputId}}">
+      <button type="button" class="js-qty__adjust js-qty__adjust--plus" data-id="{{key}}" data-qty="{{itemAdd}}">
+        <span class="__plus">&#43;</span>
+        <span class="visually-hidden">{% endraw %}{{ 'cart.general.increase_quantity' | t }}{% raw %}</span>
+      </button>
+    </div>
+  {% endraw %}
+  </script>

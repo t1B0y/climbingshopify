@@ -1,0 +1,95 @@
+{%- include 'section-helper', snippet_instance: section, snippet_type: 'section', snippet_name: 'list-collections', section_class: 'list-collections', section_type: 'list-collections' -%}
+
+{% schema %}
+  {
+    "name": "Collections List",
+    "settings": [
+      {
+        "type": "radio",
+        "id": "display_type",
+        "label": "Select collections to show",
+        "default": "all",
+        "options": [
+          {
+            "value": "all",
+            "label": "All"
+          },
+          {
+            "value": "selected",
+            "label": "Selected"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "grid",
+        "label": "Collections per row",
+        "default": "3",
+        "options": [
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_title_uppercase",
+        "label": "Uppercase Collection Title",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "display_count",
+        "label": "Display Products Count",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Style Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_styles",
+        "label": "Enable Custom Styles",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Collection Title Color"
+      },
+      {
+        "type": "range",
+        "id": "text_font_size",
+        "min": 12,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "Collection Title Font Size",
+        "default": 18
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,83 @@
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'small-12 medium-3 large-3 columns' %}
+{% endunless %}
+
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+  {%- assign discount_percentage = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+<div class="{{ grid_item_width }} product-loop-item">
+  {% if settings.show_product_badges %}
+    {% if sold_out %}
+      <div class="product-badge badge__sold-out">{{ 'products.product.out_of_stock' | t }}</div>
+    {% endif %}
+
+    {% if on_sale and sold_out == false and discount_percentage > 0 %}
+      <div class="product-badge badge__sale">{{ 'products.product.save' | t: discount: discount_percentage }} </div>
+    {% endif %}
+  {% endif %}
+
+  <a href="{{ product.url | within: collection }}" class="product-loop-image {% if settings.display_secondary_image %}secondary-image-enabled{% endif %}">
+    {%- assign img_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+    {% unless product.featured_image == blank %}
+      <img class="lazyload product-image_featured" src="{{ product.featured_image | img_url: '300x300' }}"
+        data-src="{{ img_url }}"
+        data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+        data-aspectratio="{{ product.featured_image.aspect_ratio }}"
+        data-sizes="auto"
+        alt="{{ product.featured_image.alt | escape }}">
+
+      {% if settings.display_secondary_image %}
+        {%- assign secondary_img = product.images[1] -%}
+        {% unless secondary_img == blank %}
+          <div class="lazyload product-image_secondary"
+            style="background-image: url('{{ secondary_img | img_url: 'large' }}');"
+            data-bgset="{% include 'bgset', image: secondary_img %}"
+            data-sizes="auto"
+            data-parent-fit="cover">
+          </div>
+        {% endunless %}
+      {% endif %}
+    {% endunless %}
+  </a>
+
+  <a class="product-loop-title" href="{{ product.url | within: collection }}">{{ product.title }}</a>
+
+  <a href="{{ product.url | within: collection }}" class="product-loop-price">
+    {% if on_sale %}
+      <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+      <s><span class="money">{{ product.compare_at_price | money }}</span></s>
+      {% if product.price_varies %}
+        {% assign sale_price = product.price | money | prepend: '<span class="money">' | append: '</span>' %}
+        {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+      {% else %}
+        <span class="money">{{ product.price | money }}</span>
+      {% endif %}
+    {% else %}
+      {% if product.price_varies %}
+        {% assign price = product.price | money | prepend: '<span class="money">' | append: '</span>' %}
+        {{ 'products.general.from_text_html' | t: price: price }}
+      {% else %}
+        <span class="money">{{ product.price | money }}</span>
+      {% endif %}
+    {% endif %}
+    {% if sold_out %}
+      <span class="is-sold-out">{{ 'products.product.sold_out' | t }}</span>
+    {% endif %}
+  </a>
+
+  {% if settings.add_spr_markup %}
+   <div class="spr-badge__wrap">
+      <a href="{{ product.url | within: collection }}#shopify-product-reviews">
+        <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+      </a>
+    </div>
+  {% endif %}
+</div>

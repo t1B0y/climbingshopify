@@ -1,0 +1,81 @@
+{% paginate blog.articles by settings.blog_posts_count %}
+<div class="blog-header-wrap">
+  {% section 'blog-header' %}
+</div>
+
+<div class="row blog-page">
+  <div class="large-9 large-centered columns blogroll">
+    {% if settings.blog_display_tags_nav %}
+      <div class="blog-tags-nav row text-{{ settings.blog_tags_nav_align }}">
+        {% unless settings.collection_nav_title == blank %}
+          <h4 class="blog-tags-nav__title columns">{{ 'blogs.sidebar.categories' | t }}</h4>
+        {% endunless %}
+        {% if blog.all_tags.size > 0 %}
+          <ul class="menu">
+            {% for tag in blog.all_tags %}
+              <li><a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag | capitalize }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% for article in blog.articles %}
+      <div class="blog-article js-animate-appear-show text-{{ settings.blog_posts_align }}">
+        <h2 class="article-title"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+        <div class="article-meta">
+          <span class="article-meta__item article-date"><time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time></span>
+
+          {% include 'tags-article' %}
+
+          {% if settings.blog_post_author %}
+            <span class="article-meta__item article-author">{{ 'blogs.article.by_author_html' | t: author: article.author }}</span>
+          {% endif %}
+
+          {% if blog.comments_enabled? %}
+            <a class="article-meta__item comments-num" href="{{ article.url }}#comments">
+              {{ 'blogs.comments.with_count' | t: count: article.comments_count }}
+            </a>
+          {% endif %}
+
+        </div>
+
+        {% if article.image %}
+          <a class="article-featured-img" href="{{ article.url }}">
+            {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <img class="lazyload"
+              src="{{ article.image | img_url: '300x' }}"
+              data-src="{{ img_url }}"
+              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+              data-aspectratio="1.6"
+              data-sizes="auto"
+              data-parent-fit="cover"
+              alt="{{ article.image.alt | escape }}">
+          </a>
+        {% endif %}
+
+        <div class="rte article-excerpt">
+          {% if article.excerpt.size > 0 %}
+            {{ article.excerpt }}
+          {% else %}
+            <p>{{ article.content | strip_html | truncatewords: 50 }}</p>
+          {% endif %}
+        </div>
+
+        <a class="button hollow read-more-btn" href="{{ article.url }}">{{ 'blogs.article.read_more' | t }}</a>
+
+      </div>
+
+      {% unless forloop.last %}<hr>{% endunless %}
+    {% endfor %}
+
+    {% if paginate.pages > 1 %}
+      <hr>
+      <div class="pagination">
+        {{ paginate | default_pagination | replace: '&laquo; Previous', '<span class="icon icon-angle-left"></span>' | replace: 'Next &raquo;', '<span class="icon icon-angle-right"></span>' }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endpaginate %}

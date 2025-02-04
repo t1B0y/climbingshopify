@@ -1,0 +1,44 @@
+{% if snippet_instance.settings.section_identifier != blank %}
+  {% assign section_id = snippet_instance.settings.section_identifier %}
+{% else %}
+  {%- capture section_id -%} section-{{-snippet_instance.id-}} {%- endcapture -%}
+{% endif %}
+
+{% if snippet_instance.settings.enable_custom_styles %}
+  {% include 'section-styles', instance_settings: snippet_instance.settings %}
+{% endif %}
+
+{% assign bg_image = snippet_instance.settings.background_image %}
+{% assign bg_image_style = snippet_instance.settings.background_image_style %}
+{% if bg_image != blank and bg_image_style == 'cover' %} {% assign lazyload = 'lazyload' %} {% endif %}
+
+{% assign text_shadow = blank %}
+{% if snippet_instance.settings.text_shadow != blank %}
+  {%- capture text_shadow -%}text-shadow__{{- snippet_instance.settings.text_shadow -}} {%- endcapture -%}
+{% endif %}
+
+{% assign parallax_class = blank %}
+{% if snippet_instance.settings.parallax and snippet_instance.settings.enable_custom_styles %}
+  {% assign parallax_class = 'section__content_parallax' %}
+{% endif %}
+<div id="{{section_id}}" class="section {{ parallax_class }}">
+  {%- capture section_attributes -%}
+    {% if snippet_type == 'section' %}
+      data-section-id="{{ snippet_instance.id }}" data-section-type="{{ section_type }}"
+    {% else %}
+      data-block-id="{{ snippet_instance.id }}" data-block-type="{{ section_type }}"
+    {% endif %}
+  {%- endcapture -%}
+  <div {{ section_attributes }}
+    class="{{ lazyload }} content-section {{ section_class }} section__background"
+    {% if bg_image != blank and bg_image_style == 'cover' and snippet_instance.settings.enable_custom_styles %}
+      data-bgset="{% include 'bgset', image: bg_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+    {% endif %}>
+    {% if snippet_instance.settings.darken != blank %}
+    <div class="background_darken"></div>
+    {% endif %}
+    {% include snippet_name %}
+  </div>
+</div>

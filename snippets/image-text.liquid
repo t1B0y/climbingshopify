@@ -1,0 +1,68 @@
+{% case snippet_instance.settings.text_width %}
+  {% when '1-2' %}
+    {% assign img_layout = 'medium-6 large-6 columns' %}
+    {% assign text_layout = 'medium-6 large-6 columns' %}
+  {% when '1-3' %}
+    {% assign img_layout = 'medium-8 large-8 columns' %}
+    {% assign text_layout = 'medium-4 large-4 columns' %}
+  {% when '2-3' %}
+    {% assign img_layout = 'medium-4 large-4 columns' %}
+    {% assign text_layout = 'medium-8 large-8 columns' %}
+  {% when '3-4' %}
+    {% assign img_layout = 'medium-3 large-3 columns' %}
+    {% assign text_layout = 'medium-9 large-9 columns' %}
+{% endcase %}
+
+<div class="content-section__inner row {% if snippet_instance.settings.align_horizontally %}image-text_middle{% endif %} {% if snippet_instance.settings.mobile_centered %}image-text_mobile-centered{% endif %} js-animate-appear-show">
+  {% if snippet_instance.settings.alignment == 'left' %}
+    <div class="{{ img_layout }} image-text__img">
+      {% unless snippet_instance.settings.the_image == blank %}
+        {%- assign img_url = snippet_instance.settings.the_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <img class="lazyload" width="{{ snippet_instance.settings.image_width }}"
+        src="{{ snippet_instance.settings.the_image | img_url: '300x300' }}"
+        data-src="{{ img_url }}"
+        data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+        data-aspectratio="{{ snippet_instance.settings.the_image.aspect_ratio }}"
+        data-sizes="auto"
+        alt="{{ snippet_instance.settings.title }}">
+      {% endunless %}
+    </div>
+  {% endif %}
+
+  <div class="{{ text_layout }} image-text__content">
+    {% unless snippet_instance.settings.title == blank %}
+      <h2 class="section-title image-text__title section__title-style">
+        {{ snippet_instance.settings.title | escape }}
+      </h2>
+    {% endunless %}
+    {% unless snippet_instance.settings.text == blank %}
+      <div class="rte image-text__text section__text-style">
+        {{ snippet_instance.settings.text }}
+      </div>
+    {% endunless %}
+    <div class="image-text__btns">
+      {% for block in snippet_instance.blocks %}
+        {% if block.settings.btn_link != blank %}
+          {% assign btn_id = block.id %}
+          {% include 'button-style', button_id: btn_id, btn_bg_color: block.settings.btn_bg_color, btn_style: block.settings.btn_style, btn_text_color: block.settings.btn_text_color %}
+          <a id="button-{{ btn_id }}" {{ block.shopify_attributes }} href="{{ block.settings.btn_link }}" class="button {% if block.settings.btn_style == 'hollow' %}hollow{% endif %}" style="{{ btn_style_css | strip_newlines }}">{{ block.settings.btn_text }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if snippet_instance.settings.alignment == 'right' %}
+    <div class="{{ img_layout }} image-text__img">
+      {% unless snippet_instance.settings.the_image == blank %}
+        {%- assign img_url = snippet_instance.settings.the_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <img class="lazyload" width="{{ snippet_instance.settings.image_width }}"
+        src="{{ snippet_instance.settings.the_image | img_url: '300x300' }}"
+        data-src="{{ img_url }}"
+        data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+        data-aspectratio="{{ snippet_instance.settings.the_image.aspect_ratio }}"
+        data-sizes="auto"
+        alt="{{ snippet_instance.settings.title }}">
+      {% endunless %}
+    </div>
+  {% endif %}
+</div>

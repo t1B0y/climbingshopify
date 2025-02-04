@@ -1,0 +1,40 @@
+{% if snippet_instance.settings.blog_name != blank %}
+  {% assign blog_title = snippet_instance.settings.blog_name %}
+{% else %}
+  {% assign blog_title = 'news' %}
+{% endif %}
+
+<div class="content-section__inner">
+  {% unless snippet_instance.settings.title == blank %}
+    <div class="row text-{{ snippet_instance.settings.title_alignment }} js-animate-appear-show">
+      <h2 class="columns section-title section__title-style">{{ snippet_instance.settings.title }}</h2>
+    </div>
+  {% endunless %}
+  <div class="row small-up-1 medium-up-3 large-up-3 recent-posts text-{{ snippet_instance.settings.text_alignment }} js-animate-appear-show">
+    {% for article in blogs[blog_title].articles limit:snippet_instance.settings.total %}
+      <div class="column recent-posts-item">
+        {% if article.image %}
+          <div class="post__image-wrap">
+            <a class="lazyload post__featured-img" href="{{ article.url }}"
+              style="background-image: url('{{ article.image | img_url: 'large' }}');"
+              data-bgset="{% include 'bgset', image: article.image %}"
+              data-sizes="auto"
+              data-parent-fit="cover">
+            </a>
+          </div>
+        {% endif %}
+        {% if snippet_instance.settings.display_tags %}
+          <div class="post__tags">
+            {% include 'tags-article' %}
+          </div>
+        {% endif %}
+        <h3 class="post__title section__text-style"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+        {% if snippet_instance.settings.display_date %}
+          <div class="post__meta section__text-style">
+            <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>

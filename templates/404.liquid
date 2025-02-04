@@ -1,0 +1,15 @@
+<!-- /templates/404.liquid -->
+<div class="text-center page-404">
+  <div class="row columns">
+    <h1>{{ 'general.404.title' | t }}</h1>
+    <p>{{ 'general.404.subtext_html' | t }}</p>
+  </div>
+  <div class="rte row columns image-404">
+    {% if settings.not_found_image %}
+      {% capture imageUrl %} {{ settings.not_found_image | img_url: '2048x' }} {% endcapture %}
+      <img src="{{ imageUrl }}" alt="{{ 'general.404.title' | t }}">
+    {% else %}
+      {{ '404.png' | asset_url | img_tag }}
+    {% endif %}
+  </div>
+</div>

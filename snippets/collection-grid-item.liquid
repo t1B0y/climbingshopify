@@ -1,0 +1,36 @@
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'small-12 medium-3 large-3 columns' %}
+{% endunless %}
+
+{% if collection.title != blank %}
+  <div class="{{ grid_item_width }} text-center collection-grid-item section__text-style">
+
+    {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+    {% assign collection_image = blank %}
+
+    {% if collection.image %}
+      {% assign collection_image = collection.image %}
+    {% else %}
+      {% if collection.products.size > 0 and collection.products.first.featured_image != blank %}
+        {% assign collection_image = collection.products.first.featured_image %}
+      {% endif %}
+    {% endif %}
+
+    <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}" class="{% if collection_image != blank %}lazyload{% endif %} collection-image"
+    {% if collection_image != blank %}
+      style="background-image: url('{{ collection_image | img_url: 'large' }}');"
+      data-bgset="{% include 'bgset', image: collection_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+    {% endif %}>
+      <span class="collection-desc">
+        <span class="collection__title section__text-style {% if snippet_instance.settings.collection_title_uppercase %}collection__title_up{% endif %}">{{ collection.title }}</span>
+        {% if snippet_instance.settings.display_count %}
+        <span class="collection__count">
+          {{ 'collections.general.items_with_count' | t: count: collection.all_products_count }}
+        </span>
+        {% endif %}
+      </span>
+    </a>
+  </div>
+{% endif %}

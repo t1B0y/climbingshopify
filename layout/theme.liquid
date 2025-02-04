@@ -1,0 +1,102 @@
+<!doctype html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{ shop.locale }}"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  {% if settings.favicon_enable %}
+  <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+  {% endif %}
+
+  <!-- Title and description ================================================== -->
+  <title>
+  {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+  <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <!-- Helpers ================================================== -->
+  {% include 'social-meta-tags' %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+
+  <!-- CSS ================================================== -->
+  {{ 'star-core.css' | asset_url | stylesheet_tag }}
+  {{ 'custom.scss.css' | asset_url | stylesheet_tag }}
+
+  <!-- Header hook for plugins ================================================== -->
+  {{ content_for_header }}
+  {% include 'oldIE-js' %}
+
+  {{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
+
+  <noscript>
+    <style>
+      .lazyload, .js-animate-appear-show { opacity: 1; }
+      .product__variants__swatch { display: none; }
+      .product__variants_no-js { display: block; }
+    </style>
+  </noscript>
+
+  {% if template contains 'customers' %}
+    {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+  {% endif %}
+</head>
+
+<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}" >
+
+  {% include 'mobile-menu-sidebar' %}
+
+  {% if settings.ajax_cart_method == "drawer" %}
+    {% include 'cart-sidebar' %}
+  {% endif %}
+
+  {% section 'header' %}
+
+  <div id="PageContainer" class="off-canvas-content page-wrapper" data-off-canvas-content>
+    <main class="wrapper main-content {% if settings.fixed_header %}main-content_fixed-header{% endif %}" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+  </div>
+
+  {{ 'star-core.js' | asset_url | script_tag }}
+  {{ 'star.js' | asset_url | script_tag }}
+
+  <script>
+    {% if resetPassword %}
+      $(function() {
+        star.resetPasswordSuccess();
+      });
+    {% endif %}
+  </script>
+
+  {% if settings.ajax_cart_method == "drawer" %}
+    {{ 'handlebars.min.js' | asset_url | script_tag }}
+    {% include 'ajax-cart-template' %}
+    {{ 'ajax-cart.js' | asset_url | script_tag }}
+    <script>
+      jQuery(function($) {
+        ajaxCart.init({
+          formSelector: '#AddToCartForm',
+          cartContainer: '#cartSidebarContainer',
+          addToCartSelector: '#AddToCart',
+          cartCountSelector: '#CartCount',
+          cartCostSelector: '#CartCost',
+          moneyFormat: {{ shop.money_format | json }}
+        });
+      });
+
+      jQuery(document.body).on('afterCartLoad.ajaxCart', function(evt, cart) {
+        $('#cartSidebar').foundation('open');
+      });
+    </script>
+  {% endif %}
+</body>
+</html>

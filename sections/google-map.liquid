@@ -1,0 +1,215 @@
+{%- include 'section-helper', snippet_instance: section, snippet_type: 'section', snippet_name: 'google-maps', section_class: 'google-map-section', section_type: 'google-map' -%}
+
+{% schema %}
+  {
+    "name": "Google Maps",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contact Info"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Our store"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description"
+      },
+      {
+        "type": "richtext",
+        "id": "address",
+        "label": "Street Address",
+        "default": "<p>960 Orange Ave, Coronado, CA 92118</p>"
+      },
+      {
+        "type": "richtext",
+        "id": "hours",
+        "label": "Hours",
+        "default": "<p>Mon - Fri, 10am - 9pm<br>Saturday, 11am - 9pm</p>"
+      },
+      {
+        "type": "text",
+        "id": "phone",
+        "label": "Phone Number",
+        "default": "+99999999"
+      },
+      {
+        "type": "text",
+        "id": "email",
+        "label": "Email",
+        "default": "hi@outlane.co"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_social_links",
+        "label": "Show Social Media Links",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Location"
+      },
+      {
+        "type": "text",
+        "id": "map_address",
+        "label": "Map address",
+        "info": "Google Maps will find the exact location",
+        "default": "960 Orange Ave, Coronado, CA 92118"
+      },
+      {
+        "type": "text",
+        "id": "button_text",
+        "label": "Map link label",
+        "default": "Get directions",
+        "info": "Leave blank to hide it."
+      },
+      {
+        "type": "header",
+        "content": "Layout Settings"
+      },
+      {
+        "type": "select",
+        "id": "map_grid",
+        "label": "Map Width",
+        "default": "2-3",
+        "options": [
+          {
+            "value": "1-2",
+            "label": "1/2"
+          },
+          {
+            "value": "2-3",
+            "label": "2/3"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "map_position",
+        "label": "Map Position",
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Content Style"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_styles",
+        "label": "Enable Custom Styles",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Color"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title Color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color"
+      },
+      {
+        "type": "range",
+        "id": "title_font_size",
+        "min": 12,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "Title Font Size",
+        "default": 28
+      },
+      {
+        "type": "range",
+        "id": "text_font_size",
+        "min": 12,
+        "max": 55,
+        "step": 1,
+        "unit": "px",
+        "label": "Text Font Size",
+        "default": 15
+      },
+      {
+        "type": "range",
+        "id": "spacing_top",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "px",
+        "label": "Spacing: Top",
+        "default": 50
+      },
+      {
+        "type": "range",
+        "id": "spacing_bottom",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "px",
+        "label": "Spacing: Bottom",
+        "default": 50
+      },
+      {
+        "type": "header",
+        "content": "Button Style"
+      },
+      {
+        "type": "select",
+        "id": "btn_style",
+        "label": "Button Style",
+        "default": "full",
+        "options": [
+          {
+            "value": "full",
+            "label": "Filled"
+          },
+          {
+            "value": "hollow",
+            "label": "Hollow"
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "btn_bg_color",
+        "label": "Button Background Color"
+      },
+      {
+        "type": "color",
+        "id": "btn_text_color",
+        "label": "Button Text Color"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Google Maps",
+        "category": "Contact"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

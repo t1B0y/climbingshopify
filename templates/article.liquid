@@ -1,0 +1,88 @@
+{% assign number_of_comments = article.comments_count %}
+{% if comment and comment.created_at %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+{% section 'article-header' %}
+
+<div class="row article-page">
+  <article class="large-9 large-centered columns blog-article js-animate-appear-show" itemscope itemtype="http://schema.org/Article">
+
+    <div class="rte" itemprop="articleBody">
+      {{ article.content }}
+    </div>
+
+    {% if settings.blog_share_buttons %}
+    <hr />
+      {% include 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+    {% endif %}
+
+    {% if blog.comments_enabled? %}
+      <div class="article__comments">
+        <hr />
+        <h4 class="blog-comments-title">{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</h4>
+        {% paginate article.comments by 10 %}
+          {% comment %}
+            #comments is required, it is used as an anchor link by Shopify.
+          {% endcomment %}
+          <div id="comments">
+            {% if comment and comment.created_at %}
+              <p class="note form-success">
+                {% if blog.moderated? %}
+                  {{ 'blogs.comments.success_moderated' | t }}
+                {% else %}
+                  {{ 'blogs.comments.success' | t }}
+                {% endif %}
+              </p>
+            {% endif %}
+
+            {% if number_of_comments > 0 %}
+              <ul class="no-bullets">          
+                {% if comment and comment.created_at %}
+                  <li id="{{ comment.id }}" class="comment first{% if article.comments_count == 0 %} last{% endif %}">
+                    {% include 'comment' %}
+                  </li>
+                {% endif %}
+                {% for comment in article.comments %}
+                  <li id="{{ comment.id }}" class="comment{% unless number_of_comments > article.comments_count %}{% if forloop.first %} first{% endif %}{% endunless %}{% if forloop.last %} last {% endif %}">
+                    {% include 'comment' %}
+                  </li>
+                {% endfor %}
+              </ul>
+
+              {% if paginate.pages > 1 %}
+                <div class="pagination">
+                  {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+                </div>
+              {% endif %}
+            {% endif %}
+
+            <div class="comment-form">
+              {% form 'new_comment', article %}
+                <h4 class="post-comment-title">{{ 'blogs.comments.title' | t }}</h4>
+
+                {{ form.errors | default_errors }}
+
+                <label for="CommentAuthor">{{ 'blogs.comments.name' | t }}</label>
+                <input type="text" name="comment[author]" id="CommentAuthor" class="input-full{% if form.errors contains 'author' %} error{% endif %}" placeholder="{{ 'blogs.comments.name' | t }}" value="{{ form.author }}" autocapitalize="words">
+
+                <label for="CommentEmail">{{ 'blogs.comments.email' | t }}</label>
+                <input type="email" name="comment[email]" id="CommentEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'blogs.comments.email' | t }}" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+
+                <label for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
+                <textarea name="comment[body]" id="CommentBody" class="input-full{% if form.errors contains 'body' %} error{% endif %}" placeholder="{{ 'blogs.comments.message' | t }}">{{ form.body }}</textarea>
+
+                {% if blog.moderated? %}
+                  <p class="info">{{ 'blogs.comments.moderated' | t }}</p>
+                {% endif %}
+
+                <input type="submit" class="button" value="{{ 'blogs.comments.post' | t }}">
+              {% endform %}
+            </div>
+
+          </div>
+        {% endpaginate %}
+      </div>
+    {% endif %}
+  </article>
+</div>
