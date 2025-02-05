@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "presets": {
     "Polaris": {
@@ -194,5 +203,89 @@
       "color_product_buy_bg": "#5F6DC7",
       "color_product_buy_text": "#fff"
     }
+  },
+  "current": {
+    "logo_use_image": true,
+    "ajax_cart_method": "page",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "show_announcement_bar": "hide",
+          "announcement_text": "<p>Add your announcement here</p>",
+          "announcement_text_mobile": "<p>Add your announcement for mobile</p>",
+          "text_alignment": "center",
+          "announcement_link": "",
+          "main_menu": "main-menu",
+          "main_menu_alignment": "right",
+          "header_show_search": true
+        }
+      },
+      "hero": {
+        "type": "hero",
+        "settings": {
+          "title": "Introduce Your Brand",
+          "text": "<p>Add a slogan text here.</p>",
+          "alignment": "center",
+          "text_alignment": "center",
+          "text_width": "2-3",
+          "mobile_centered": false,
+          "full_height": true,
+          "mobile_height": 400,
+          "desktop_height": 600,
+          "enable_custom_styles": true,
+          "title_color": "",
+          "text_color": "",
+          "title_font_size": 52,
+          "text_font_size": 28,
+          "spacing_top": 50,
+          "spacing_bottom": 50,
+          "background_color": "",
+          "background_image": "shopify://shop_images/pexels-davyd-bortnik-1578556-3058762.jpg",
+          "background_image_style": "cover",
+          "parallax": false,
+          "darken": 0
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "footer-0": {
+            "type": "footer-menu",
+            "settings": {
+              "title": "Menu",
+              "menu_id": "footer"
+            }
+          },
+          "footer-1": {
+            "type": "text",
+            "settings": {
+              "title": "Custom Text",
+              "text": "<p>Add some text here.</p>",
+              "show_social_links": true
+            }
+          },
+          "footer-2": {
+            "type": "newsletter",
+            "settings": {
+              "title": "Join the newsletter",
+              "info": "<p>Add some text here.</p>",
+              "newsletter_form_action": "",
+              "button_text": "Subscribe"
+            }
+          }
+        },
+        "block_order": [
+          "footer-0",
+          "footer-1",
+          "footer-2"
+        ],
+        "settings": {
+          "show_payment_icons": true,
+          "footer_copyright": "<p>©</p>"
+        }
+      }
+    },
+    "content_for_index": []
   }
 }
